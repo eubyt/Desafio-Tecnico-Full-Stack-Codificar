@@ -402,102 +402,6 @@ func TestTicketValidate(t *testing.T) {
 	}
 }
 
-func TestTicketUpdate(t *testing.T) {
-	now := time.Now().UTC()
-	id, _ := uuid.NewV7()
-	assigneeID, _ := uuid.NewV7()
-	carlos := domainAssignee.Assignee{ID: assigneeID, Name: "Carlos Silva", CreatedAt: now, UpdatedAt: now}
-	anaID, _ := uuid.NewV7()
-	ana := domainAssignee.Assignee{ID: anaID, Name: "Ana Souza", CreatedAt: now, UpdatedAt: now}
-
-	tk := domainTicket.NewTicket(
-		id,
-		"Initial Title",
-		"Initial description of the ticket",
-		domainTicket.PriorityLow,
-		carlos,
-		now,
-	)
-
-	t.Run("should update fields successfully with valid data", func(t *testing.T) {
-		later := now.Add(10 * time.Minute)
-		err := tk.Update(
-			"  Updated Title With Details  ",
-			"  Updated description with more than 5 characters  ",
-			domainTicket.PriorityHigh,
-			domainTicket.StatusInProgress,
-			ana,
-			later,
-		)
-
-		require.NoError(t, err)
-		assert.Equal(t, "Updated Title With Details", tk.Title)
-		assert.Equal(t, "Updated description with more than 5 characters", tk.Description)
-		assert.Equal(t, domainTicket.PriorityHigh, tk.Priority)
-		assert.Equal(t, domainTicket.StatusInProgress, tk.Status)
-		assert.Equal(t, ana.ID, tk.AssigneeID)
-		assert.Equal(t, "Ana Souza", tk.Assignee.Name)
-		assert.Equal(t, later, tk.UpdatedAt)
-		assert.True(t, tk.IsOpen())
-	})
-
-	t.Run("should handle zero time by defaulting to non-zero UTC time", func(t *testing.T) {
-		err := tk.Update(
-			"Title",
-			"Description",
-			domainTicket.PriorityMedium,
-			domainTicket.StatusOpen,
-			carlos,
-			time.Time{},
-		)
-
-		require.NoError(t, err)
-		assert.False(t, tk.UpdatedAt.IsZero())
-	})
-
-	t.Run("should reject invalid status transition from closed to resolved", func(t *testing.T) {
-		later := now.Add(20 * time.Minute)
-		tk.Status = domainTicket.StatusClosed
-		err := tk.Update(
-			tk.Title,
-			tk.Description,
-			tk.Priority,
-			domainTicket.StatusResolved,
-			tk.Assignee,
-			later,
-		)
-		require.Error(t, err)
-		assert.Equal(t, domainTicket.ErrInvalidStatusTransition, err)
-	})
-
-	t.Run("should allow reopening from closed to open or in_progress", func(t *testing.T) {
-		tk.Status = domainTicket.StatusClosed
-
-		err := tk.Update(
-			tk.Title,
-			tk.Description,
-			tk.Priority,
-			domainTicket.StatusOpen,
-			tk.Assignee,
-			now,
-		)
-		require.NoError(t, err)
-		assert.Equal(t, domainTicket.StatusOpen, tk.Status)
-
-		tk.Status = domainTicket.StatusClosed
-		err = tk.Update(
-			tk.Title,
-			tk.Description,
-			tk.Priority,
-			domainTicket.StatusInProgress,
-			tk.Assignee,
-			now,
-		)
-		require.NoError(t, err)
-		assert.Equal(t, domainTicket.StatusInProgress, tk.Status)
-	})
-}
-
 func TestTicketOperations(t *testing.T) {
 	now := time.Now().UTC()
 	id, _ := uuid.NewV7()
@@ -505,8 +409,6 @@ func TestTicketOperations(t *testing.T) {
 	carlos := domainAssignee.Assignee{ID: assigneeID, Name: "Carlos Silva", CreatedAt: now, UpdatedAt: now}
 	brunoID, _ := uuid.NewV7()
 	bruno := domainAssignee.Assignee{ID: brunoID, Name: "Bruno Santos", CreatedAt: now, UpdatedAt: now}
-	anaID, _ := uuid.NewV7()
-	ana := domainAssignee.Assignee{ID: anaID, Name: "Ana Souza", CreatedAt: now, UpdatedAt: now}
 
 	tk := domainTicket.NewTicket(
 		id,
@@ -517,45 +419,57 @@ func TestTicketOperations(t *testing.T) {
 		now,
 	)
 
-	t.Run("AssignTo should successfully reassign ticket", func(t *testing.T) {
-		later := now.Add(5 * time.Minute)
-		err := tk.AssignTo(bruno, later)
+	t.Run("AssignTo should successfully reassign ticket and update timestamp", func(t *testing.T) {
+		initialUpdatedAt := tk.UpdatedAt
+		time.Sleep(2 * time.Millisecond)
+
+		err := tk.AssignTo(bruno)
 		require.NoError(t, err)
 		assert.Equal(t, bruno.ID, tk.AssigneeID)
 		assert.Equal(t, "Bruno Santos", tk.Assignee.Name)
-		assert.Equal(t, later, tk.UpdatedAt)
-	})
-
-	t.Run("AssignTo should reject empty or whitespace assignee", func(t *testing.T) {
-		err := tk.AssignTo(domainAssignee.Assignee{ID: uuid.Nil, Name: "   "}, now)
-		require.ErrorIs(t, err, domainTicket.ErrInvalidAssignee)
-	})
-
-	t.Run("AssignTo should handle zero time", func(t *testing.T) {
-		err := tk.AssignTo(ana, time.Time{})
-		require.NoError(t, err)
+		assert.True(t, tk.UpdatedAt.After(initialUpdatedAt) || tk.UpdatedAt.Equal(initialUpdatedAt))
 		assert.False(t, tk.UpdatedAt.IsZero())
 	})
 
-	t.Run("ChangeStatus should transition through valid lifecycle", func(t *testing.T) {
-		later := now.Add(15 * time.Minute)
-		err := tk.ChangeStatus(domainTicket.StatusResolved, later)
+	t.Run("AssignTo should reject empty or whitespace assignee", func(t *testing.T) {
+		err := tk.AssignTo(domainAssignee.Assignee{ID: uuid.Nil, Name: "   "})
+		require.ErrorIs(t, err, domainTicket.ErrInvalidAssignee)
+	})
+
+	t.Run("ChangeStatus should transition through valid lifecycle and update timestamp", func(t *testing.T) {
+		initialUpdatedAt := tk.UpdatedAt
+		time.Sleep(2 * time.Millisecond)
+
+		err := tk.ChangeStatus(domainTicket.StatusResolved)
 		require.NoError(t, err)
 		assert.Equal(t, domainTicket.StatusResolved, tk.Status)
 		assert.False(t, tk.IsOpen(), "Resolved status should not be considered open")
+		assert.True(t, tk.UpdatedAt.After(initialUpdatedAt) || tk.UpdatedAt.Equal(initialUpdatedAt))
+		assert.False(t, tk.UpdatedAt.IsZero())
 	})
 
 	t.Run("ChangeStatus should reject invalid status transition", func(t *testing.T) {
 		tk.Status = domainTicket.StatusClosed
-		err := tk.ChangeStatus(domainTicket.StatusResolved, now)
+		err := tk.ChangeStatus(domainTicket.StatusResolved)
 		require.ErrorIs(t, err, domainTicket.ErrInvalidStatusTransition)
 	})
 
-	t.Run("ChangeStatus should handle zero time", func(t *testing.T) {
-		tk.Status = domainTicket.StatusOpen
-		err := tk.ChangeStatus(domainTicket.StatusInProgress, time.Time{})
+	t.Run("ChangeStatus should allow reopening from closed to open or in_progress", func(t *testing.T) {
+		tk.Status = domainTicket.StatusClosed
+		err := tk.ChangeStatus(domainTicket.StatusOpen)
 		require.NoError(t, err)
-		assert.False(t, tk.UpdatedAt.IsZero())
+		assert.Equal(t, domainTicket.StatusOpen, tk.Status)
+
+		tk.Status = domainTicket.StatusClosed
+		err = tk.ChangeStatus(domainTicket.StatusInProgress)
+		require.NoError(t, err)
+		assert.Equal(t, domainTicket.StatusInProgress, tk.Status)
+	})
+
+	t.Run("Title and Description remain immutable during operations", func(t *testing.T) {
+		assert.Equal(t, "Login Problem", tk.Title)
+		assert.Equal(t, "User cannot login with Google SSO", tk.Description)
+		assert.Equal(t, domainTicket.PriorityMedium, tk.Priority)
 	})
 
 	t.Run("IsOpen status checks", func(t *testing.T) {

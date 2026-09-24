@@ -76,47 +76,22 @@ func NewTicket(id uuid.UUID, title, description string, priority Priority, a ass
 	}
 }
 
-func (t *Ticket) Update(title, description string, priority Priority, status Status, a assignee.Assignee, now time.Time) error {
-	if !t.Status.CanTransitionTo(status) {
-		return ErrInvalidStatusTransition
-	}
-
-	if now.IsZero() {
-		now = time.Now().UTC()
-	}
-
-	t.Title = strings.TrimSpace(title)
-	t.Description = strings.TrimSpace(description)
-	t.Priority = priority
-	t.Status = status
-	t.AssigneeID = a.ID
-	t.Assignee = a
-	t.UpdatedAt = now.UTC()
-	return nil
-}
-
-func (t *Ticket) AssignTo(a assignee.Assignee, now time.Time) error {
+func (t *Ticket) AssignTo(a assignee.Assignee) error {
 	if a.ID == uuid.Nil || strings.TrimSpace(a.Name) == "" {
 		return ErrInvalidAssignee
 	}
-	if now.IsZero() {
-		now = time.Now().UTC()
-	}
 	t.AssigneeID = a.ID
 	t.Assignee = a
-	t.UpdatedAt = now.UTC()
+	t.UpdatedAt = time.Now().UTC()
 	return nil
 }
 
-func (t *Ticket) ChangeStatus(newStatus Status, now time.Time) error {
+func (t *Ticket) ChangeStatus(newStatus Status) error {
 	if !t.Status.CanTransitionTo(newStatus) {
 		return ErrInvalidStatusTransition
 	}
-	if now.IsZero() {
-		now = time.Now().UTC()
-	}
 	t.Status = newStatus
-	t.UpdatedAt = now.UTC()
+	t.UpdatedAt = time.Now().UTC()
 	return nil
 }
 

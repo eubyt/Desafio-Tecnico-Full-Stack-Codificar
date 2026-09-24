@@ -2,7 +2,6 @@ package ticket
 
 import (
 	"context"
-	"time"
 
 	domainTicket "github.com/adriancf/demo-sistema-chamado/backend/internal/domain/ticket"
 )
@@ -32,14 +31,12 @@ func (uc *UpdateUseCase) Execute(ctx context.Context, id string, input UpdateInp
 		return Output{}, domainTicket.ErrInvalidStatus
 	}
 
-	now := time.Now().UTC()
-
 	if input.Status != "" {
 		status, err := domainTicket.ParseStatus(input.Status)
 		if err != nil {
 			return Output{}, err
 		}
-		if err := t.ChangeStatus(status, now); err != nil {
+		if err := t.ChangeStatus(status); err != nil {
 			return Output{}, err
 		}
 	}
@@ -49,7 +46,7 @@ func (uc *UpdateUseCase) Execute(ctx context.Context, id string, input UpdateInp
 		if err != nil {
 			return Output{}, err
 		}
-		if err := t.AssignTo(*selectedAssignee, now); err != nil {
+		if err := t.AssignTo(*selectedAssignee); err != nil {
 			return Output{}, err
 		}
 	}
