@@ -38,9 +38,6 @@ make db-up
 No diretório `backend`:
 
 ```bash
-# Exportar variáveis (ou carregar seu .env)
-export DB_HOST=localhost DB_PORT=5432 DB_USER=ticket_user DB_PASSWORD=ticket_password DB_NAME=ticket_system
-
 # Iniciar servidor
 make run
 # ou: go run ./cmd/api
