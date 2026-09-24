@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Executar Front-end",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm --prefix web run dev"
+    },
+    {
+      "name": "Depurar Front-end",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/web",
+      "preLaunchTask": "Frontend: Run Dev Server"
+    },
+    {
+      "name": "Executar API (Backend)",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/backend/cmd/api",
+      "cwd": "${workspaceFolder}/backend",
+      "env": {
+        "DB_HOST": "localhost",
+        "DB_PORT": "5432",
+        "DB_USER": "ticket_user",
+        "DB_PASSWORD": "ticket_password",
+        "DB_NAME": "ticket_system",
+        "DB_SSLMODE": "disable",
+        "PORT": "8080"
+      }
+    },
+    {
+      "name": "Depurar Teste Go Atual",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${fileDirname}"
+    },
+    {
+      "name": "Executar Fullstack (Backend + Front-end)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev"
+    }
+  ],
+  "compounds": []
+}

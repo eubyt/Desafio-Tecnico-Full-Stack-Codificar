@@ -1,0 +1,12 @@
+{
+    "name": "demo-sistema-chamado",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "./scripts/dev.sh dev",
+        "start": "./scripts/dev.sh start",
+        "build": "./scripts/dev.sh build",
+        "test": "./scripts/dev.sh test",
+        "openapi-gen": "./scripts/dev.sh openapi-gen"
+    }
+}

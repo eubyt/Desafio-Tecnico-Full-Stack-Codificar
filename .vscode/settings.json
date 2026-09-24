@@ -1,0 +1,63 @@
+{
+  "go.useLanguageServer": true,
+  "go.toolsManagement.checkForUpdates": "local",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "always"
+    }
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [
+    "./web"
+  ],
+  "remote.portsAttributes": {
+    "8080": {
+      "label": "Backend API",
+      "requireLocalPort": true
+    },
+    "5173": {
+      "label": "Frontend Web (Dev)",
+      "requireLocalPort": true
+    },
+    "4173": {
+      "label": "Frontend Preview (Prod)",
+      "requireLocalPort": true
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "requireLocalPort": true
+    }
+  }
+}

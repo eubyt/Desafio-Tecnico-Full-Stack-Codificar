@@ -1,0 +1,128 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Fullstack: Run Dev (Backend + Frontend)",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Frontend: Run Dev Server",
+      "type": "shell",
+      "command": "npm --prefix web run dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "custom",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*VITE.*",
+          "endsPattern": ".*Local:.*http.*"
+        }
+      },
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Frontend: Build",
+      "type": "shell",
+      "command": "make web-build",
+      "group": {
+        "kind": "build"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Frontend: Preview (Start)",
+      "type": "shell",
+      "command": "make web-start",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Frontend: Lint (ESLint)",
+      "type": "shell",
+      "command": "npm --prefix web run lint",
+      "group": "none",
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "Frontend: Lint Fix (ESLint)",
+      "type": "shell",
+      "command": "npm --prefix web run lint:fix",
+      "problemMatcher": ["$eslint-stylish"]
+    },
+    {
+      "label": "Frontend: Format (Prettier)",
+      "type": "shell",
+      "command": "npm --prefix web run format",
+      "problemMatcher": []
+    },
+    {
+      "label": "Frontend: Format Check (Prettier)",
+      "type": "shell",
+      "command": "npm --prefix web run format:check",
+      "problemMatcher": []
+    },
+    {
+      "label": "Frontend: Generate API Types",
+      "type": "shell",
+      "command": "npm --prefix web run generate:api",
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend: Run API",
+      "type": "shell",
+      "command": "make backend-run",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend: Run Tests",
+      "type": "shell",
+      "command": "make backend-test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend: Run E2E Tests (Testcontainers)",
+      "type": "shell",
+      "command": "make backend-test-e2e",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenAPI: Generate Specification",
+      "type": "shell",
+      "command": "make openapi",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Start Database",
+      "type": "shell",
+      "command": "make db-up",
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "Docker: Stop Database",
+      "type": "shell",
+      "command": "make db-down",
+      "group": "none",
+      "problemMatcher": []
+    }
+  ]
+}

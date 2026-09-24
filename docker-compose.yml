@@ -1,0 +1,47 @@
+services:
+    postgres:
+        image: postgres:16-alpine
+        container_name: ticket_system_postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: ${DB_USER:-ticket_user}
+            POSTGRES_PASSWORD: ${DB_PASSWORD:-ticket_password}
+            POSTGRES_DB: ${DB_NAME:-ticket_system}
+        ports:
+            - "${DB_PORT:-5432}:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U ${DB_USER:-ticket_user} -d ${DB_NAME:-ticket_system}",
+                ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+        sysctls:
+            net.ipv6.conf.all.disable_ipv6: 1
+            net.ipv6.conf.default.disable_ipv6: 1
+
+    app:
+        image: mcr.microsoft.com/devcontainers/go:1
+        container_name: ticket_system_app
+        restart: unless-stopped
+        environment:
+            DB_HOST: postgres
+            DB_PORT: ${DB_PORT:-5432}
+            DB_USER: ${DB_USER:-ticket_user}
+            DB_PASSWORD: ${DB_PASSWORD:-ticket_password}
+            DB_NAME: ${DB_NAME:-ticket_system}
+            DB_SSLMODE: disable
+            PORT: ${PORT:-8080}
+        volumes:
+            - .:/workspace:cached
+        command: sleep infinity
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+volumes:
+    pgdata:

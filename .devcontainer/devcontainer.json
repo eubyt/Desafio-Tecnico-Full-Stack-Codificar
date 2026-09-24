@@ -1,0 +1,52 @@
+{
+    "name": "Go, Node.js & PostgreSQL Dev Container",
+    "dockerComposeFile": ["../docker-compose.yml"],
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    "features": {
+        "ghcr.io/devcontainers/features/node:2.1.0": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "golang.go",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "bradlc.vscode-tailwindcss",
+                "editorconfig.editorconfig",
+                "ms-vscode.makefile-tools"
+            ],
+            "settings": {
+                "go.toolsManagement.checkForUpdates": "local",
+                "go.useLanguageServer": true,
+                "go.gopath": "/go"
+            }
+        }
+    },
+    "remoteEnv": {
+        "DB_HOST": "postgres",
+        "DB_PORT": "5432",
+        "DB_USER": "ticket_user",
+        "DB_PASSWORD": "ticket_password",
+        "DB_NAME": "ticket_system",
+        "DB_SSLMODE": "disable",
+        "PORT": "8080"
+    },
+    "forwardPorts": [5432, 8080, 5173, 4173],
+    "portsAttributes": {
+        "8080": {
+            "label": "Backend API",
+            "requireLocalPort": true
+        },
+        "5173": {
+            "label": "Frontend Web (Dev)",
+            "requireLocalPort": true
+        },
+        "4173": {
+            "label": "Frontend Preview",
+            "requireLocalPort": true
+        }
+    },
+    "postCreateCommand": "go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest && npm install && npm --prefix web install",
+    "remoteUser": "vscode"
+}
