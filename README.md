@@ -1,6 +1,6 @@
 # Sistema de Chamados
 
-Solução fullstack para gerenciamento desenvolvida com back-end em Go e front-end em React.
+Solução fullstack desenvolvida com back-end em Go e front-end em React.
 
 Para detalhes específicos de arquitetura, decisões de negócio e regras de cada camada:
 
