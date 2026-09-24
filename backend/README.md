@@ -1,6 +1,6 @@
 # Sistema de Chamados - Back-end
 
-API REST para gerenciamento de chamados de suporte e distribuição de atendimentos desenvolvida em Go.
+API REST para gerenciamento de chamados de suporte desenvolvida em Go.
 
 ## Como Rodar
 
