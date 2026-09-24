@@ -88,7 +88,7 @@ Para priorizar os objetivos essenciais do desafio técnico certos pontos foram d
 
 ### 5.4. Política de CORS (Cross-Origin Resource Sharing) Permissiva
 
-- **Estado Atual:** O roteador utiliza `AllowedOrigins: []string{"*"}` (`backend/internal/infra/http/router.go`), com anotação explícita no código (`NOTE: Não use * em produção`).
+- **Estado Atual:** O roteador utiliza `AllowedOrigins: []string{"*"}` (`backend/internal/infra/http/router.go`).
 
 ## 6. Decisão Técnica de Front-end: SPA (Client-Side Rendering) vs. Server-Side Rendering (SSR)
 
@@ -99,4 +99,4 @@ O front-end do projeto foi desenvolvido como uma **SPA pura (Vite + React)**, se
 O motivo principal é **evitar complexidade desnecessária (over-engineering)** para o propósito do projeto:
 
 1. **Escopo de Desafio Técnico Demonstrativo:**
-    - Adicionar SSR aumentaria drasticamente a complexidade do projeto (runtime Node.js em servidor, hidratação, deploys híbridos, sincronização de estado servidor/cliente) sem agregar valor real para a demonstração das competências solicitadas.
+    - Adicionar SSR aumentaria drasticamente a complexidade do projeto (runtime Node.js em servidor, hidratação, deploys híbridos, sincronização de estado servidor/cliente) sem agregar valor real.
