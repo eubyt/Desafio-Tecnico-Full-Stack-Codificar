@@ -65,7 +65,7 @@ Após a inicialização, os serviços estarão acessíveis em:
 | `dev`         | Inicia os containers Docker, back-end e front-end                                                | `npm run dev`         |
 | `build`       | Executa linter, suítes de testes e gera a build de produção                                      | `npm run build`       |
 | `start`       | Garante containers ativos e executa a aplicação previamente compilada em modo preview | `npm start`           |
-| `test`        | Executa as suítes de testes unitários do back-end (`go test`) e validação de tipos do front-end  | `npm test`            |
+| `test`        | Executa as suítes de testes unitários do back-end e validação de tipos do front-end  | `npm test`            |
 | `openapi-gen` | Regenera o contrato OpenAPI e sincroniza as tipagens TypeScript do front-end                     | `npm run openapi-gen` |
 | `seed`        | Popula o banco de dados com dados iniciais de demonstração                                       | —                     |
 | `db:up`       | Provisiona e inicia os containers de banco de dados em segundo plano via Docker Compose          | —                     |
